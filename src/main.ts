@@ -1,10 +1,11 @@
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const logger = new Logger('Bootstrap');
 
   const config = new DocumentBuilder()
     .setTitle('Teslo Shop')
@@ -15,8 +16,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  console.log('Services started');
-
   app.setGlobalPrefix('api');
 
   app.useGlobalPipes( 
@@ -26,6 +25,7 @@ async function bootstrap() {
     })
    );
 
-  await app.listen(3000);
+  await app.listen(process.env.PORT);
+  logger.log(`Services started on port: ${process.env.PORT}`);
 }
 bootstrap();
